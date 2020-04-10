@@ -160,6 +160,7 @@ int main(int argc, char *argv[])
 	dim = 3; /* 3 variables with 3 equations */
 
 #ifdef GE_DYNAMIC
+
 	len = ((dim * dim) + dim ) * sizeof(double);
 	q = (double *)malloc(len);
 	if(q == NULL){
@@ -182,9 +183,9 @@ int main(int argc, char *argv[])
 
 #endif
 
-	q[0] = 2.0; q[1] =  3.0; q[2]  = -1.0; q[3]  = 5.0;
-	q[4] = 1.0; q[5] = -1.0; q[6]  =  2.0; q[7]  = 5.0;
-	q[8] = 1.0; q[9] =  4.0; q[10] = -1.0; q[11] = 6.0;
+	q[offset(0, 0, 4)] = 2.0; q[offset(0, 1, 4)] =  3.0; q[offset(0, 2, 4)] = -1.0; q[offset(0, 3, 4)] = 5.0;
+	q[offset(1, 0, 4)] = 1.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] =  2.0; q[offset(1, 3, 4)] = 5.0;
+	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  4.0; q[offset(2, 2, 4)] = -1.0; q[offset(2, 3, 4)] = 6.0;
 
 	/* --- sample data END ------------------------ */
 
