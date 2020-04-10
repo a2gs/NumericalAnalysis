@@ -61,9 +61,9 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 	double *newLine = NULL;
 	size_t SzNewLine = 0;
 
-	mtrxRows = dim + 1;
+	mtrxRows = dim + 1; /* +1 for result */
 
-	SzNewLine = mtrxRows * sizeof(double); /* +1 for result */
+	SzNewLine = mtrxRows * sizeof(double);
 
 	newLine = (double *)malloc(SzNewLine);
 	if(newLine == NULL)
@@ -100,10 +100,20 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 
 	printf("--------------------------------------------------\nSolving:\n");
 
+	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
+		return(GE_RET_IMPOSSIBLE);
+
+#if 0
+	for(line = dim-1, round = dim-1; (line >= 0) && (line < dim); line--, round--){ /* line is an 'unsigned int', but i'll not remove (line >= 0) considering unsigned int overflow */
+		printf(">>>> %u\n", line);
+
+		for(row = offset(line, round, mtrxRows);;){
+			result[line] = 0;
+		}
 
 
-
-
+	}
+#endif
 
 
 
@@ -119,9 +129,18 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 int main(int argc, char *argv[])
 {
 	int ret = 0;
-	double *q = NULL, *result = NULL;
 	unsigned int dim = 0, i = 0;
+
+#define GE_STATIC (1)
+//#define GE_DYNAMIC (1)
+
+#ifdef GE_STATIC
+	double qq[3][4] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}, result[3] = {0.0, 0.0, 0.0};
+	double *q = NULL;
+#elif GE_DYNAMIC
+	double *q = NULL, *result = NULL;
 	size_t len = 0;
+#endif
 
 	/* --- sample data START ---------------------- */
 	/*
@@ -140,6 +159,7 @@ int main(int argc, char *argv[])
 
 	dim = 3; /* 3 variables with 3 equations */
 
+#ifdef GE_DYNAMIC
 	len = ((dim * dim) + dim ) * sizeof(double);
 	q = (double *)malloc(len);
 	if(q == NULL){
@@ -156,9 +176,16 @@ int main(int argc, char *argv[])
 	}
 	memset(result, 0, len);
 
+#elif GE_STATIC
+
+	q = *qq;
+
+#endif
+
 	q[0] = 2.0; q[1] =  3.0; q[2]  = -1.0; q[3]  = 5.0;
 	q[4] = 1.0; q[5] = -1.0; q[6]  =  2.0; q[7]  = 5.0;
 	q[8] = 1.0; q[9] =  4.0; q[10] = -1.0; q[11] = 6.0;
+
 	/* --- sample data END ------------------------ */
 
 	printLinearSystem(dim, q);
@@ -187,8 +214,10 @@ int main(int argc, char *argv[])
 			break;
 	}
 
+#ifdef GE_DYNAMIC
 	free(q);
 	free(result);
+#endif
 
 	return(0);
 }
