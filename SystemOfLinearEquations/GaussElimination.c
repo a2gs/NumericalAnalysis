@@ -88,7 +88,7 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 				newLine[row+1] = determinant2x2(det);
 			}
 
-			for(i = 0; i <= mtrxRows; i++)
+			for(i = 0; i < mtrxRows; i++)
 				q[offset(line, i, mtrxRows)] = newLine[i];
 		}
 
