@@ -99,7 +99,7 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 
 	free(newLine);
 
-	printf("--------------------------------------------------\nResolving:\n");
+	printf("--------------------------------------------------\nSolving:\n");
 
 
 
