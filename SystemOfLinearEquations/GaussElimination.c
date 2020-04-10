@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
   /-
  | 2a + 3b - 1c = 5
 -| 1a - 1b + 2c = 5
- | 1a + 4b - 1x = 6
+ | 1a + 4b - 1c = 6
   \-
 
   a = 1
