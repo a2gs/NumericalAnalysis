@@ -71,7 +71,7 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 
 	printf("--------------------------------------------------\nTriangulation:\n");
 
-	for(round = 0; round < dim; round++){
+	for(round = 0; round < dim-1; round++){
 
 		for(line = round + 1; line < mtrxRows; line++){
 
