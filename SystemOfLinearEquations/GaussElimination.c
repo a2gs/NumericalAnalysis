@@ -49,27 +49,26 @@ void printLinearSystem(const unsigned int dim, const double *q)
 #define GE_RET_IMPOSSIBLE   (2)
 #define GE_RET_POSSIBLE     (3)
 #define GE_RET_ERROR        (-1)
+#define GE_RET_OK           (0)
 
-int GaussElimination(unsigned int dim, double *q, double *result)
+int GaussElimination_Triangulation(unsigned int dim, double *q)
 {
-	register unsigned int round = 0;
-	register unsigned int line  = 0;
-	register unsigned int row   = 0;
-	register unsigned int i = 0;
+	register unsigned int round    = 0;
+	register unsigned int line     = 0;
+	register unsigned int row      = 0;
+	register unsigned int i        = 0;
 	register unsigned int mtrxRows = 0;
+	double *newLine                = NULL;
+	size_t SzNewLine               = 0;
 	double det[2][2] = {{0.0, 0.0}, {0.0, 0.0}};
-	double *newLine = NULL;
-	size_t SzNewLine = 0;
 
-	mtrxRows = dim + 1; /* +1 for result */
+	mtrxRows = dim + 1; /* +1 for result: q[dim][mtrxRows] */
 
 	SzNewLine = mtrxRows * sizeof(double);
 
 	newLine = (double *)malloc(SzNewLine);
 	if(newLine == NULL)
 		return(GE_RET_ERROR);
-
-	printf("--------------------------------------------------\nTriangulation:\n");
 
 	for(round = 0; round < dim-1; round++){
 
@@ -98,7 +97,14 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 
 	free(newLine);
 
-	printf("--------------------------------------------------\nSolving:\n");
+	return(GE_RET_OK);
+}
+
+int GaussElimination_Solve(unsigned int dim, double *q, double *result)
+{
+	register unsigned int mtrxRows = 0;
+
+	mtrxRows = dim + 1; /* +1 for result: q[dim][mtrxRows] */
 
 	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
@@ -115,8 +121,6 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 	}
 #endif
 
-
-
 	result[0] = 1.0;
 	result[1] = 2.0;
 	result[2] = 3.0;
@@ -124,6 +128,19 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 
 
 	return(GE_RET_POSSIBLE);
+}
+
+int GaussElimination(unsigned int dim, double *q, double *result)
+{
+	printf("--------------------------------------------------\nTriangulation:\n");
+
+	if(GaussElimination_Triangulation(dim, q) == GE_RET_ERROR){
+		return(GE_RET_ERROR);
+	}
+
+	printf("--------------------------------------------------\nSolving:\n");
+
+	return(GaussElimination_Solve(dim, q, result));
 }
 
 int main(int argc, char *argv[])
@@ -151,9 +168,7 @@ int main(int argc, char *argv[])
  | 1a + 4b - 1c = 6
   \-
 
-  a = 1
-  b = 2
-  c = 3
+	a = 1; b = 2; c = 3
 
 	 */
 
