@@ -73,7 +73,7 @@ int GaussElimination(unsigned int dim, double *q, double *result)
 
 	for(round = 0; round < dim; round++){
 
-		for(line = round + 1; line <= mtrxRows; line++){
+		for(line = round + 1; line < mtrxRows; line++){
 
 			memset(newLine, 0, SzNewLine);
 			det[0][0] = det[0][1] = det[1][0] = det[1][1] = 0.0;
