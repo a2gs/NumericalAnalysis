@@ -150,7 +150,6 @@ int main(int argc, char *argv[])
 	memset(q, 0, len);
 
 	len = dim * sizeof(double);
-
 	result = (double *)malloc(len);
 	if(result == NULL){
 		printf("Erro malloc result.\n");
