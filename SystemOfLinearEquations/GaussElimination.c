@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
   /-
  | 2a + 3b - 1c = 5
 -| 1a - 1b + 2c = 5
- |	1a + 4b - 1x = 6
+ | 1a + 4b - 1x = 6
   \-
 
   a = 1
@@ -177,9 +177,9 @@ int main(int argc, char *argv[])
 			break;
 
 		case GE_RET_POSSIBLE:
-			for(i = 0; i < dim; i++){
+			for(i = 0; i < dim; i++)
 				printf("%c = %f\n", i + 'a', result[i]);
-			}
+
 			break;
 
 		case GE_RET_ERROR:
