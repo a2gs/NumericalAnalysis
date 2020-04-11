@@ -105,23 +105,38 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 	register unsigned int mtrxRows = 0;
 	register unsigned int line     = 0;
 	register unsigned int row      = 0;
+	unsigned int limit = 0;
 
 	mtrxRows = dim + 1; /* +1 for result: q[dim][mtrxRows] */
+
+	limit = dim - 1;
 
 	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
 
 	for(line = dim-1; (line >= 0) && (line <= dim-1); line--){
 
-		for(row = line; (row >= 0) && (row <= mtrxRows-2); row--){
+		for(row = limit; (row >= 0) && (row <= limit); row--){
 
-			if(row == mtrxRows-2){
-				result[line] = q[offset(dim-1, mtrxRows-1, mtrxRows)] / q[offset(dim-1, mtrxRows-2, mtrxRows)];
+printf("DEBUG: line = %d  row = %d   (limit = %d  dim = %d  mtrxRows = %d)\n", line, row, limit, dim, mtrxRows);
+
+			if(row == line){
+
+printf("DEBUG: q[offset(line, dim, mtrxRows)][%f] / q[offset(line, limit, mtrxRows)][%f] = result[line]%f\n", q[offset(line, dim, mtrxRows)], q[offset(line, limit, mtrxRows)], q[offset(line, dim, mtrxRows)] / q[offset(line, limit, mtrxRows)]);
+
+				result[line] = q[offset(line, dim, mtrxRows)] / q[offset(line, row, mtrxRows)];
 				break; /* end work at this line */
+
 			}else{
-				q[offset(dim-1, mtrxRows-1, mtrxRows)] +=- q[offset(dim-1, row, mtrxRows)];
+
+printf("DEBUG: q[offset(line, dim, mtrxRows)][%f]  +=- q[offset(line, row, mtrxRows)][%f] * result[line+1][%f]\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], result[line+1]);
+
+				q[offset(line, dim, mtrxRows)] +=- (q[offset(line, row, mtrxRows)] * result[line+1]);
+
 			}
+
 		}
+
 	}
 
 
