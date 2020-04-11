@@ -113,7 +113,6 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 
 	for(line = dim-1; (line >= 0) && (line <= dim-1); line--){
 
-
 		for(row = line; (row >= 0) && (row <= mtrxRows-2); row--){
 
 			if(row == mtrxRows-2){
@@ -122,9 +121,7 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 			}else{
 				q[offset(dim-1, mtrxRows-1, mtrxRows)] +=- q[offset(dim-1, row, mtrxRows)];
 			}
-
 		}
-
 	}
 
 
