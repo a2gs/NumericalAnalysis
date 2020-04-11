@@ -103,29 +103,36 @@ int GaussElimination_Triangulation(unsigned int dim, double *q)
 int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 {
 	register unsigned int mtrxRows = 0;
+	register unsigned int line     = 0;
+	register unsigned int row      = 0;
 
 	mtrxRows = dim + 1; /* +1 for result: q[dim][mtrxRows] */
 
 	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
 
-#if 0
-	for(line = dim-1, round = dim-1; (line >= 0) && (line < dim); line--, round--){ /* line is an 'unsigned int', but i'll not remove (line >= 0) considering unsigned int overflow */
-		printf(">>>> %u\n", line);
+	for(line = dim-1; (line >= 0) && (line <= dim-1); line--){
 
-		for(row = offset(line, round, mtrxRows);;){
-			result[line] = 0;
+
+		for(row = line; (row >= 0) && (row <= mtrxRows-2); row--){
+
+			if(row == mtrxRows-2){
+				result[line] = q[offset(dim-1, mtrxRows-1, mtrxRows)] / q[offset(dim-1, mtrxRows-2, mtrxRows)];
+				break; /* end work at this line */
+			}else{
+				q[offset(dim-1, mtrxRows-1, mtrxRows)] +=- q[offset(dim-1, row, mtrxRows)];
+			}
+
 		}
 
-
 	}
-#endif
 
+
+	/*
 	result[0] = 1.0;
 	result[1] = 2.0;
 	result[2] = 3.0;
-
-
+	*/
 
 	return(GE_RET_POSSIBLE);
 }
