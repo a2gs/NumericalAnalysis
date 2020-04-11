@@ -113,7 +113,7 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
 
-	for(line = dim-1; (line >= 0) && (line <= limit); line--){
+	for(line = limit; (line >= 0) && (line <= limit); line--){
 
 		for(row = limit; (row >= 0) && (row <= limit); row--){
 
