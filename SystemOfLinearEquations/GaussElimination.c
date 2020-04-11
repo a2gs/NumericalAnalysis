@@ -165,7 +165,8 @@ int main(int argc, char *argv[])
 //#define GE_DYNAMIC (1)
 
 #ifdef GE_STATIC
-	double qq[3][4] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}, result[3] = {0.0, 0.0, 0.0};
+	//double qq[3][4] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}, result[3] = {0.0, 0.0, 0.0};
+	double qq[4][5] = {{0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}}, result[4] = {0.0, 0.0, 0.0, 0.0};
 	double *q = NULL;
 #elif GE_DYNAMIC
 	double *q = NULL, *result = NULL;
@@ -212,16 +213,23 @@ int main(int argc, char *argv[])
 
 #endif
 
-#define GE_SAMPLE (2)
+#define GE_SAMPLE (3)
 #if GE_SAMPLE == 1
 	q[offset(0, 0, 4)] = 2.0; q[offset(0, 1, 4)] =  3.0; q[offset(0, 2, 4)] = -1.0; q[offset(0, 3, 4)] = 5.0;
 	q[offset(1, 0, 4)] = 1.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] =  2.0; q[offset(1, 3, 4)] = 5.0;
 	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  4.0; q[offset(2, 2, 4)] = -1.0; q[offset(2, 3, 4)] = 6.0;
 #elif GE_SAMPLE == 2
-	q[offset(0, 0, 4)] = 3.0; q[offset(0, 1, 4)] = -1.0; q[offset(0, 2, 4)] =  2.0; q[offset(0, 3, 4)] = 6.5;
-	q[offset(1, 0, 4)] = 3.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] = -1.0; q[offset(1, 3, 4)] =-1.0;
-	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  1.0; q[offset(2, 2, 4)] = -1.0; q[offset(2, 3, 4)] = 0.0;
-	/* a = 1; b = 1.5; c = 2.5 */
+	q[offset(0, 0, 4)] = 3.0; q[offset(0, 1, 4)] = -1.0; q[offset(0, 2, 4)] =  2.0; q[offset(0, 3, 4)] =  6.5;
+	q[offset(1, 0, 4)] = 3.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] = -1.0; q[offset(1, 3, 4)] = -1.0;
+	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  1.0; q[offset(2, 2, 4)] = -1.0; q[offset(2, 3, 4)] =  0.0;
+	/* a = 1.0; b = 1.5; c = 2.5 */
+#elif GE_SAMPLE == 3
+	q[offset(0, 0, 5)] =  1.0; q[offset(0, 1, 5)] = -1.0; q[offset(0, 2, 5)] =  1.0; q[offset(0, 3, 5)] =  1.0; q[offset(0, 4, 5)] = 0.0;
+	q[offset(1, 0, 5)] =  1.0; q[offset(1, 1, 5)] =  1.0; q[offset(1, 2, 5)] = -1.0; q[offset(0, 3, 5)] =  1.0; q[offset(1, 4, 5)] = 1.0;
+	q[offset(2, 0, 5)] = -1.0; q[offset(2, 1, 5)] =  1.0; q[offset(2, 2, 5)] =  1.0; q[offset(0, 3, 5)] = -1.0; q[offset(2, 4, 5)] = 0.0;
+	q[offset(3, 0, 5)] =  2.0; q[offset(3, 1, 5)] = -1.0; q[offset(3, 2, 5)] = -1.0; q[offset(0, 3, 5)] =  3.0; q[offset(3, 4, 5)] = 1.0;
+	/* a = 0.0; b = 0.5; c = 0.0; d = 0.5 */
+	dim = 4; /* 4 variables with 4 equations */
 #endif
 
 	/* --- sample data END ------------------------ */
