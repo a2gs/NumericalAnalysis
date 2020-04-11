@@ -100,7 +100,7 @@ int GaussElimination_Triangulation(unsigned int dim, double *q)
 	return(GE_RET_OK);
 }
 
-#define ZERO_INCLUDE_POSITIVE_INCLUDE_LIMIT(__GE_point_, __GE_upper_limit_) ((__GE_point_ >= 0) && (__GE_point_ <= __GE_upper_limit_))
+#define GE_ZERO_CLOSED_POSITIVE_CLOSED_LIMIT(__GE_point_, __GE_upper_limit_) ((__GE_point_ >= 0) && (__GE_point_ <= __GE_upper_limit_))
 int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 {
 	register unsigned int mtrxRows = 0;
@@ -115,9 +115,9 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
 
-	for(line = limit; ZERO_INCLUDE_POSITIVE_INCLUDE_LIMIT(line, limit); line--){
+	for(line = limit; GE_ZERO_CLOSED_POSITIVE_CLOSED_LIMIT(line, limit); line--){
 
-		for(row = limit; ZERO_INCLUDE_POSITIVE_INCLUDE_LIMIT(row, limit); row--){
+		for(row = limit; GE_ZERO_CLOSED_POSITIVE_CLOSED_LIMIT(row, limit); row--){
 
 //printf("DEBUG: line = %d  row = %d   (limit = %d  dim = %d  mtrxRows = %d)\n", line, row, limit, dim, mtrxRows);
 
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 
 #endif
 
-#define GE_SAMPLE 2
+#define GE_SAMPLE (2)
 #if GE_SAMPLE == 1
 	q[offset(0, 0, 4)] = 2.0; q[offset(0, 1, 4)] =  3.0; q[offset(0, 2, 4)] = -1.0; q[offset(0, 3, 4)] = 5.0;
 	q[offset(1, 0, 4)] = 1.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] =  2.0; q[offset(1, 3, 4)] = 5.0;
