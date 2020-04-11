@@ -100,6 +100,7 @@ int GaussElimination_Triangulation(unsigned int dim, double *q)
 	return(GE_RET_OK);
 }
 
+#define ZERO_INCLUDE_POSITIVE_INCLUDE_LIMIT(__GE_point_, __GE_upper_limit_) ((__GE_point_ >= 0) && (__GE_point_ <= __GE_upper_limit_))
 int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 {
 	register unsigned int mtrxRows = 0;
@@ -108,26 +109,35 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 	unsigned int limit = 0;
 
 	mtrxRows = dim + 1; /* +1 for result: q[dim][mtrxRows] */
+
 	limit = dim - 1;
 
 	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
 
-	for(line = limit; (line >= 0) && (line <= limit); line--){
+	for(line = limit; ZERO_INCLUDE_POSITIVE_INCLUDE_LIMIT(line, limit); line--){
 
-		for(row = limit; (row >= 0) && (row <= limit); row--){
+		for(row = limit; ZERO_INCLUDE_POSITIVE_INCLUDE_LIMIT(row, limit); row--){
+
+//printf("DEBUG: line = %d  row = %d   (limit = %d  dim = %d  mtrxRows = %d)\n", line, row, limit, dim, mtrxRows);
 
 			if(row == line){
+
+//printf("DEBUG: q[offset(line, dim, mtrxRows)][%f] / q[offset(line, row, mtrxRows)][%f] = result[line]%f\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], q[offset(line, dim, mtrxRows)] / q[offset(line, row, mtrxRows)]);
 
 				result[line] = q[offset(line, dim, mtrxRows)] / q[offset(line, row, mtrxRows)];
 				break; /* end work at this line */
 
 			}else{
 
+//printf("DEBUG: q[offset(line, dim, mtrxRows)][%f]  +=- q[offset(line, row, mtrxRows)][%f] * result[line+1][%f]\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], result[line+1]);
+
 				q[offset(line, dim, mtrxRows)] +=- (q[offset(line, row, mtrxRows)] * result[row]);
 
 			}
+
 		}
+
 	}
 
 	return(GE_RET_POSSIBLE);
@@ -165,6 +175,7 @@ int main(int argc, char *argv[])
 	/* --- sample data START ---------------------- */
 	/*
 
+		SAMPLE1
   /-
  | 2a + 3b - 1c = 5
 -| 1a - 1b + 2c = 5
@@ -201,16 +212,17 @@ int main(int argc, char *argv[])
 
 #endif
 
-	/*
+#define GE_SAMPLE 2
+#if GE_SAMPLE == 1
 	q[offset(0, 0, 4)] = 2.0; q[offset(0, 1, 4)] =  3.0; q[offset(0, 2, 4)] = -1.0; q[offset(0, 3, 4)] = 5.0;
 	q[offset(1, 0, 4)] = 1.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] =  2.0; q[offset(1, 3, 4)] = 5.0;
 	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  4.0; q[offset(2, 2, 4)] = -1.0; q[offset(2, 3, 4)] = 6.0;
-	*/
-
+#elif GE_SAMPLE == 2
 	q[offset(0, 0, 4)] = 3.0; q[offset(0, 1, 4)] = -1.0; q[offset(0, 2, 4)] =  2.0; q[offset(0, 3, 4)] = 6.5;
 	q[offset(1, 0, 4)] = 3.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] = -1.0; q[offset(1, 3, 4)] =-1.0;
 	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  1.0; q[offset(2, 2, 4)] = -1.0; q[offset(2, 3, 4)] = 0.0;
 	/* a = 1; b = 1.5; c = 2.5 */
+#endif
 
 	/* --- sample data END ------------------------ */
 
