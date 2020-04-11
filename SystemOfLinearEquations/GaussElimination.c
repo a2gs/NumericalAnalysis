@@ -108,43 +108,27 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 	unsigned int limit = 0;
 
 	mtrxRows = dim + 1; /* +1 for result: q[dim][mtrxRows] */
-
 	limit = dim - 1;
 
 	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
 
-	for(line = dim-1; (line >= 0) && (line <= dim-1); line--){
+	for(line = dim-1; (line >= 0) && (line <= limit); line--){
 
 		for(row = limit; (row >= 0) && (row <= limit); row--){
 
-printf("DEBUG: line = %d  row = %d   (limit = %d  dim = %d  mtrxRows = %d)\n", line, row, limit, dim, mtrxRows);
-
 			if(row == line){
-
-printf("DEBUG: q[offset(line, dim, mtrxRows)][%f] / q[offset(line, limit, mtrxRows)][%f] = result[line]%f\n", q[offset(line, dim, mtrxRows)], q[offset(line, limit, mtrxRows)], q[offset(line, dim, mtrxRows)] / q[offset(line, limit, mtrxRows)]);
 
 				result[line] = q[offset(line, dim, mtrxRows)] / q[offset(line, row, mtrxRows)];
 				break; /* end work at this line */
 
 			}else{
 
-printf("DEBUG: q[offset(line, dim, mtrxRows)][%f]  +=- q[offset(line, row, mtrxRows)][%f] * result[line+1][%f]\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], result[line+1]);
-
-				q[offset(line, dim, mtrxRows)] +=- (q[offset(line, row, mtrxRows)] * result[line+1]);
+				q[offset(line, dim, mtrxRows)] +=- (q[offset(line, row, mtrxRows)] * result[row]);
 
 			}
-
 		}
-
 	}
-
-
-	/*
-	result[0] = 1.0;
-	result[1] = 2.0;
-	result[2] = 3.0;
-	*/
 
 	return(GE_RET_POSSIBLE);
 }
@@ -217,9 +201,16 @@ int main(int argc, char *argv[])
 
 #endif
 
+	/*
 	q[offset(0, 0, 4)] = 2.0; q[offset(0, 1, 4)] =  3.0; q[offset(0, 2, 4)] = -1.0; q[offset(0, 3, 4)] = 5.0;
 	q[offset(1, 0, 4)] = 1.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] =  2.0; q[offset(1, 3, 4)] = 5.0;
 	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  4.0; q[offset(2, 2, 4)] = -1.0; q[offset(2, 3, 4)] = 6.0;
+	*/
+
+	q[offset(0, 0, 4)] = 3.0; q[offset(0, 1, 4)] = -1.0; q[offset(0, 2, 4)] =  2.0; q[offset(0, 3, 4)] = 6.5;
+	q[offset(1, 0, 4)] = 3.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] = -1.0; q[offset(1, 3, 4)] =-1.0;
+	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  1.0; q[offset(2, 2, 4)] = -1.0; q[offset(2, 3, 4)] = 0.0;
+	/* a = 1; b = 1.5; c = 2.5 */
 
 	/* --- sample data END ------------------------ */
 
