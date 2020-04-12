@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define GE_STATIC (1)
+//#define GE_DYNAMIC (1)
+
 double determinant3x3(const double m[3][3])
 {
 	return((m[0][0] * m[1][1] * m[2][2]) +
@@ -58,33 +61,38 @@ int GaussElimination_Triangulation(unsigned int dim, double *q)
 	register unsigned int row      = 0;
 	register unsigned int i        = 0;
 	register unsigned int mtrxRows = 0;
-	double *newLine                = NULL;
 	size_t SzNewLine               = 0;
 	double det[2][2] = {{0.0, 0.0}, {0.0, 0.0}};
+#ifdef GE_STATIC
+	double newLine[dim+1];
+#elif GE_DYNAMIC
+	double *newLine = NULL;
+#endif
 
 	mtrxRows = dim + 1; /* +1 for result: q[dim][mtrxRows] */
-
 	SzNewLine = mtrxRows * sizeof(double);
 
+#ifdef GE_DYNAMIC
 	newLine = (double *)malloc(SzNewLine);
 	if(newLine == NULL)
 		return(GE_RET_ERROR);
+#endif
 
 	for(round = 0; round < dim-1; round++){
 
-		for(line = round + 1; line < mtrxRows; line++){
+		for(line = round+1; line < dim; line++){
 
 			memset(newLine, 0, SzNewLine);
 			det[0][0] = det[0][1] = det[1][0] = det[1][1] = 0.0;
 
-			for(row = round; row < mtrxRows; row++){
+			for(row = round+1; row < mtrxRows; row++){
 
 				det[0][0] = q[offset(round, round, mtrxRows)];
-				det[0][1] = q[offset(round, row+1, mtrxRows)];
+				det[0][1] = q[offset(round, row  , mtrxRows)];
 				det[1][0] = q[offset(line , round, mtrxRows)];
-				det[1][1] = q[offset(line , row+1, mtrxRows)];
+				det[1][1] = q[offset(line , row  , mtrxRows)];
 
-				newLine[row+1] = determinant2x2(det);
+				newLine[row] = determinant2x2(det);
 			}
 
 			for(i = 0; i < mtrxRows; i++)
@@ -95,7 +103,9 @@ int GaussElimination_Triangulation(unsigned int dim, double *q)
 		printLinearSystem(dim, q);
 	}
 
+#ifdef GE_DYNAMIC
 	free(newLine);
+#endif
 
 	return(GE_RET_OK);
 }
@@ -106,11 +116,10 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 	register unsigned int mtrxRows = 0;
 	register unsigned int line     = 0;
 	register unsigned int row      = 0;
-	unsigned int limit = 0;
+	register unsigned int limit    = 0;
 
 	mtrxRows = dim + 1; /* +1 for result: q[dim][mtrxRows] */
-
-	limit = dim - 1;
+	limit    = dim - 1;
 
 	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
@@ -119,25 +128,17 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 
 		for(row = limit; GE_ZERO_CLOSED_POSITIVE_CLOSED_LIMIT(row, limit); row--){
 
-//printf("DEBUG: line = %d  row = %d   (limit = %d  dim = %d  mtrxRows = %d)\n", line, row, limit, dim, mtrxRows);
+			/*printf("DEBUG: line = %d  row = %d   (limit = %d  dim = %d  mtrxRows = %d)\n", line, row, limit, dim, mtrxRows);*/
 
 			if(row == line){
-
-//printf("DEBUG: q[offset(line, dim, mtrxRows)][%f] / q[offset(line, row, mtrxRows)][%f] = result[line]%f\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], q[offset(line, dim, mtrxRows)] / q[offset(line, row, mtrxRows)]);
-
+				/*printf("DEBUG: q[offset(line, dim, mtrxRows)][%f] / q[offset(line, row, mtrxRows)][%f] = result[line]%f\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], q[offset(line, dim, mtrxRows)] / q[offset(line, row, mtrxRows)]); */
 				result[line] = q[offset(line, dim, mtrxRows)] / q[offset(line, row, mtrxRows)];
 				break; /* end work at this line */
-
 			}else{
-
-//printf("DEBUG: q[offset(line, dim, mtrxRows)][%f]  +=- q[offset(line, row, mtrxRows)][%f] * result[line+1][%f]\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], result[line+1]);
-
+				/*printf("DEBUG: q[offset(line, dim, mtrxRows)][%f]  +=- q[offset(line, row, mtrxRows)][%f] * result[line+1][%f]\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], result[line+1]);*/
 				q[offset(line, dim, mtrxRows)] +=- (q[offset(line, row, mtrxRows)] * result[row]);
-
 			}
-
 		}
-
 	}
 
 	return(GE_RET_POSSIBLE);
@@ -161,12 +162,9 @@ int main(int argc, char *argv[])
 	int ret = 0;
 	unsigned int dim = 0, i = 0;
 
-#define GE_STATIC (1)
-//#define GE_DYNAMIC (1)
-
 #ifdef GE_STATIC
-	//double qq[3][4] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}, result[3] = {0.0, 0.0, 0.0};
-	double qq[4][5] = {{0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}}, result[4] = {0.0, 0.0, 0.0, 0.0};
+	double qq[3][4] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}, result[3] = {0.0, 0.0, 0.0};
+	//double qq[4][5] = {{0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}}, result[4] = {0.0, 0.0, 0.0, 0.0};
 	double *q = NULL;
 #elif GE_DYNAMIC
 	double *q = NULL, *result = NULL;
@@ -213,7 +211,7 @@ int main(int argc, char *argv[])
 
 #endif
 
-#define GE_SAMPLE (3)
+#define GE_SAMPLE (1)
 #if GE_SAMPLE == 1
 	q[offset(0, 0, 4)] = 2.0; q[offset(0, 1, 4)] =  3.0; q[offset(0, 2, 4)] = -1.0; q[offset(0, 3, 4)] = 5.0;
 	q[offset(1, 0, 4)] = 1.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] =  2.0; q[offset(1, 3, 4)] = 5.0;
