@@ -169,7 +169,7 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 	if((q[offset(limit, limit, mtrxRows)] == 0.0) && (q[offset(limit, dim, mtrxRows)] == 0.0))
 		return(GE_RET_UNDETERMINED);
 
-	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
+	if(q[offset(limit, limit, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
 
 	for(line = limit; GE_ZERO_CLOSED_POSITIVE_CLOSED_LIMIT(line, limit); line--){
