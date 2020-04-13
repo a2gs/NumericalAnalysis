@@ -66,18 +66,18 @@ int reorder(unsigned int dim, double *q)
 	unsigned int i = 0;
 	unsigned int j = 0;
 	unsigned int k = 0;
-	unsigned int qtd_var_current = 0;
-	unsigned int qtd_var_next    = 0;
+	unsigned int qtd0Current = 0;
+	unsigned int qtd0Next    = 0;
 	double aux = 0.0;
 
 	flag = 0;
 	k    = dim + 1;
 
 	for(i = 0; i < dim-1; i++){
-		qtd_var_current = countZeros(dim, &q[offset(i  , 0, k)]);
-		qtd_var_next    = countZeros(dim, &q[offset(i+1, 0, k)]);
+		qtd0Current = countZeros(dim, &q[offset(i  , 0, k)]);
+		qtd0Next    = countZeros(dim, &q[offset(i+1, 0, k)]);
 
-		if(qtd_var_current > qtd_var_next){
+		if(qtd0Current > qtd0Next){
 
 			for(j=0; j <= dim; j++){
 				aux = q[offset(i, j, k)];
