@@ -73,14 +73,14 @@ int reorder(unsigned int dim, double *q)
 	flag = 0;
 
 	for(i = 0; i < dim-1; i++){
-		qtd_var_current = countZeros(dim, &q[offset(i, 0, dim+1)]); // q[i] <-conta quantas variaveis != 0
-		qtd_var_next = countZeros(dim, &q[offset(i+1, 0, dim+1)]); // q[i+1] <- conta quantas variaveis != 0
+		qtd_var_current = countZeros(dim, &q[offset(i, 0, dim+1)]);
+		qtd_var_next    = countZeros(dim, &q[offset(i+1, 0, dim+1)]);
 
 		if(qtd_var_current > qtd_var_next){
 
 			for(j=0; j <= dim; j++){
 				aux = q[offset(i, j, dim+1)];
-				q[offset(i, j, dim+1)] = q[offset(i+1, j, dim+1)];
+				q[offset(i  , j, dim+1)] = q[offset(i+1, j, dim+1)];
 				q[offset(i+1, j, dim+1)] = aux;
 			}
 
