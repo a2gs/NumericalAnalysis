@@ -1,7 +1,6 @@
 /* Andre Augusto Giannotti Scota (https://sites.google.com/view/a2gs/) */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #define GE_STATIC (1)
@@ -63,11 +62,11 @@ unsigned int countZeros(unsigned int totElem, double *q)
  */
 int reorder(unsigned int dim, double *q)
 {
+	int flag = 0;
 	unsigned int i = 0;
 	unsigned int j = 0;
 	unsigned int qtd_var_current = 0;
 	unsigned int qtd_var_next    = 0;
-	int flag = 0;
 	double aux = 0.0;
 
 	flag = 0;
@@ -176,14 +175,10 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 
 		for(row = limit; GE_ZERO_CLOSED_POSITIVE_CLOSED_LIMIT(row, limit); row--){
 
-			/*printf("DEBUG: line = %d  row = %d   (limit = %d  dim = %d  mtrxRows = %d)\n", line, row, limit, dim, mtrxRows);*/
-
 			if(row == line){
-				/*printf("DEBUG: q[offset(line, dim, mtrxRows)][%f] / q[offset(line, row, mtrxRows)][%f] = result[line]%f\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], q[offset(line, dim, mtrxRows)] / q[offset(line, row, mtrxRows)]); */
 				result[line] = q[offset(line, dim, mtrxRows)] / q[offset(line, row, mtrxRows)];
 				break; /* end work at this line */
 			}else{
-				/*printf("DEBUG: q[offset(line, dim, mtrxRows)][%f]  +=- q[offset(line, row, mtrxRows)][%f] * result[line+1][%f]\n", q[offset(line, dim, mtrxRows)], q[offset(line, row, mtrxRows)], result[line+1]);*/
 				q[offset(line, dim, mtrxRows)] +=- (q[offset(line, row, mtrxRows)] * result[row]);
 			}
 		}
@@ -209,17 +204,16 @@ int main(int argc, char *argv[])
 {
 	int ret = 0;
 	unsigned int dim = 0, i = 0;
+	double *q = NULL;
 
 #ifdef GE_STATIC
-	//double qq[3][4] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}, result[3] = {0.0, 0.0, 0.0};
 	double qq[4][5] = {{0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}}, result[4] = {0.0, 0.0, 0.0, 0.0};
-	double *q = NULL;
 #elif GE_DYNAMIC
-	double *q = NULL, *result = NULL;
-	size_t len = 0;
+	double *result = NULL;
+	size_t  len = 0;
 #endif
 
-	dim = 3; /* 3 variables with 3 equations */
+	dim = 3; /* 3 variables with 3 equations: samples 1, 2, 4 and 5 */
 
 #ifdef GE_DYNAMIC
 
@@ -297,7 +291,6 @@ int main(int argc, char *argv[])
 		case GE_RET_POSSIBLE:
 			for(i = 0; i < dim; i++)
 				printf("%c = %f\n", i + 'a', result[i]);
-
 			break;
 
 		case GE_RET_ERROR:
