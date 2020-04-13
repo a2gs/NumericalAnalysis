@@ -48,6 +48,49 @@ void printLinearSystem(const unsigned int dim, const double *q)
 	return;
 }
 
+unsigned int countZeros(unsigned int totElem, double *q)
+{
+	unsigned int i = 0;
+
+	for(i = 0; (q[i] == 0.0) && (i <= totElem); i++);
+
+	return(i);
+}
+
+/* return:
+ * 0 - there was no exchange
+ * 1 - there was exchange
+ */
+int reorder(unsigned int dim, double *q)
+{
+	unsigned int i = 0;
+	unsigned int j = 0;
+	unsigned int qtd_var_current = 0;
+	unsigned int qtd_var_next    = 0;
+	int flag = 0;
+	double aux = 0.0;
+
+	flag = 0;
+
+	for(i = 0; i < dim-1; i++){
+		qtd_var_current = countZeros(dim, &q[offset(i, 0, dim+1)]); // q[i] <-conta quantas variaveis != 0
+		qtd_var_next = countZeros(dim, &q[offset(i+1, 0, dim+1)]); // q[i+1] <- conta quantas variaveis != 0
+
+		if(qtd_var_current > qtd_var_next){
+
+			for(j=0; j <= dim; j++){
+				aux = q[offset(i, j, dim+1)];
+				q[offset(i, j, dim+1)] = q[offset(i+1, j, dim+1)];
+				q[offset(i+1, j, dim+1)] = aux;
+			}
+
+			flag = 1;
+		}
+	}
+
+	return(flag);
+}
+
 #define GE_RET_UNDETERMINED (1)
 #define GE_RET_IMPOSSIBLE   (2)
 #define GE_RET_POSSIBLE     (3)
@@ -99,6 +142,8 @@ int GaussElimination_Triangulation(unsigned int dim, double *q)
 				q[offset(line, i, mtrxRows)] = newLine[i];
 		}
 
+		reorder(dim, q);
+
 		printf("\n");
 		printLinearSystem(dim, q);
 	}
@@ -120,6 +165,9 @@ int GaussElimination_Solve(unsigned int dim, double *q, double *result)
 
 	mtrxRows = dim + 1; /* +1 for result: q[dim][mtrxRows] */
 	limit    = dim - 1;
+
+	if((q[offset(limit, limit, mtrxRows)] == 0.0) && (q[offset(limit, dim, mtrxRows)] == 0.0))
+		return(GE_RET_UNDETERMINED);
 
 	if(q[offset(dim-1, mtrxRows-2, mtrxRows)] == 0.0)
 		return(GE_RET_IMPOSSIBLE);
@@ -163,27 +211,13 @@ int main(int argc, char *argv[])
 	unsigned int dim = 0, i = 0;
 
 #ifdef GE_STATIC
-	double qq[3][4] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}, result[3] = {0.0, 0.0, 0.0};
-	//double qq[4][5] = {{0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}}, result[4] = {0.0, 0.0, 0.0, 0.0};
+	//double qq[3][4] = {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}, result[3] = {0.0, 0.0, 0.0};
+	double qq[4][5] = {{0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}}, result[4] = {0.0, 0.0, 0.0, 0.0};
 	double *q = NULL;
 #elif GE_DYNAMIC
 	double *q = NULL, *result = NULL;
 	size_t len = 0;
 #endif
-
-	/* --- sample data START ---------------------- */
-	/*
-
-		SAMPLE1
-  /-
- | 2a + 3b - 1c = 5
--| 1a - 1b + 2c = 5
- | 1a + 4b - 1c = 6
-  \-
-
-	a = 1; b = 2; c = 3
-
-	 */
 
 	dim = 3; /* 3 variables with 3 equations */
 
@@ -211,8 +245,17 @@ int main(int argc, char *argv[])
 
 #endif
 
-#define GE_SAMPLE (2)
+#define GE_SAMPLE (1)
 #if GE_SAMPLE == 1
+/* SAMPLE1
+  /-
+ | 2a + 3b - 1c = 5
+-| 1a - 1b + 2c = 5
+ | 1a + 4b - 1c = 6
+  \-
+
+	a = 1; b = 2; c = 3
+*/
 	q[offset(0, 0, 4)] = 2.0; q[offset(0, 1, 4)] =  3.0; q[offset(0, 2, 4)] = -1.0; q[offset(0, 3, 4)] = 5.0;
 	q[offset(1, 0, 4)] = 1.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] =  2.0; q[offset(1, 3, 4)] = 5.0;
 	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  4.0; q[offset(2, 2, 4)] = -1.0; q[offset(2, 3, 4)] = 6.0;
@@ -228,9 +271,15 @@ int main(int argc, char *argv[])
 	q[offset(3, 0, 5)] =  2.0; q[offset(3, 1, 5)] = -1.0; q[offset(3, 2, 5)] = -1.0; q[offset(3, 3, 5)] =  3.0; q[offset(3, 4, 5)] = 1.0;
 	/* a = 0.0; b = 0.5; c = 0.0; d = 0.5 */
 	dim = 4; /* 4 variables with 4 equations */
+#elif GE_SAMPLE == 4 /* GE_RET_UNDETERMINED */
+	q[offset(0, 0, 4)] = 3.0; q[offset(0, 1, 4)] = -1.0; q[offset(0, 2, 4)] =  1.0; q[offset(0, 3, 4)] = 8.0;
+	q[offset(1, 0, 4)] = 1.0; q[offset(1, 1, 4)] =  2.0; q[offset(1, 2, 4)] = -1.0; q[offset(1, 3, 4)] = 4.0;
+	q[offset(2, 0, 4)] = 2.0; q[offset(2, 1, 4)] = -3.0; q[offset(2, 2, 4)] =  2.0; q[offset(2, 3, 4)] = 4.0;
+#elif GE_SAMPLE == 5 /* GE_RET_IMPOSSIBLE */
+	q[offset(0, 0, 4)] = 2.0; q[offset(0, 1, 4)] =  1.0; q[offset(0, 2, 4)] = -1.0; q[offset(0, 3, 4)] = 4.0;
+	q[offset(1, 0, 4)] = 1.0; q[offset(1, 1, 4)] = -1.0; q[offset(1, 2, 4)] =  1.0; q[offset(1, 3, 4)] = 2.0;
+	q[offset(2, 0, 4)] = 1.0; q[offset(2, 1, 4)] =  2.0; q[offset(2, 2, 4)] = -2.0; q[offset(2, 3, 4)] = 1.0;
 #endif
-
-	/* --- sample data END ------------------------ */
 
 	printLinearSystem(dim, q);
 
