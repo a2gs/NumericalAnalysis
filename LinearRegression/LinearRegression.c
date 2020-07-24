@@ -1,5 +1,4 @@
 /* Andre Augusto Giannotti Scota (https://sites.google.com/view/a2gs/) */
-
 #include <stdio.h>
 #include <math.h>
 
