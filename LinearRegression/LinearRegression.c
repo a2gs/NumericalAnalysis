@@ -1,16 +1,7 @@
 /* Andre Augusto Giannotti Scota (https://sites.google.com/view/a2gs/) */
+
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
 #include <math.h>
-/*
-#include <unistd.h>
-#include <signal.h>
-#include <time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-*/
 
 #define LR_OK   (0)
 #define LR_ERRO (1)
