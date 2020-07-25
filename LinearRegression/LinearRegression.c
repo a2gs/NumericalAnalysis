@@ -8,7 +8,7 @@
 
 float AngularCoefficientLR(unsigned int n, float sumXY, float sumX, float sumY, float sumXsquare)
 {
-	return(((n * sumXY) - (sumX * sumY)) / ((n * sumXsquare) - pow(sumX, 2.0)));
+	return(((n * sumXY) - (sumX * sumY)) / ((n * sumXsquare) - powf(sumX, 2.0)));
 }
 
 float InterceptLR(unsigned int n, float sumY, float angulCoef, float sumX)
@@ -18,7 +18,7 @@ float InterceptLR(unsigned int n, float sumY, float angulCoef, float sumX)
 
 float CorrelationCoefficientLR(unsigned int n, float sumX, float sumY, float sumXY, float sumXsquare, float sumYsquare)
 {
-	return(((n * sumXY) - (sumX * sumY)) / (sqrtf(((n * sumXsquare) - (pow(sumX, 2.0)))) * sqrtf(((n * sumYsquare) - (pow(sumY, 2.0))))));
+	return(((n * sumXY) - (sumX * sumY)) / (sqrtf(((n * sumXsquare) - (powf(sumX, 2.0)))) * sqrtf(((n * sumYsquare) - (powf(sumY, 2.0))))));
 }
 
 void summarization_LinearRegression(float *sumX, float *sumY, float *sumXY, float *sumXsquare, float *sumYsquare, float points[][2], unsigned int n)
