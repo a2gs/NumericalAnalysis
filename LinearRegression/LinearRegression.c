@@ -6,22 +6,22 @@
 #define LR_OK   (0)
 #define LR_ERRO (1)
 
-float AngularCoefficientLR(unsigned int n, float sumXY, float sumX, float sumY, float sumXsquare)
+static inline float AngularCoefficientLR(unsigned int n, float sumXY, float sumX, float sumY, float sumXsquare)
 {
 	return(((n * sumXY) - (sumX * sumY)) / ((n * sumXsquare) - powf(sumX, 2.0)));
 }
 
-float InterceptLR(unsigned int n, float sumY, float angulCoef, float sumX)
+static inline float InterceptLR(unsigned int n, float sumY, float angulCoef, float sumX)
 {
 	return(((sumY - (angulCoef * sumX)) / n));
 }
 
-float CorrelationCoefficientLR(unsigned int n, float sumX, float sumY, float sumXY, float sumXsquare, float sumYsquare)
+static inline float CorrelationCoefficientLR(unsigned int n, float sumX, float sumY, float sumXY, float sumXsquare, float sumYsquare)
 {
 	return(((n * sumXY) - (sumX * sumY)) / (sqrtf(((n * sumXsquare) - (powf(sumX, 2.0)))) * sqrtf(((n * sumYsquare) - (powf(sumY, 2.0))))));
 }
 
-void summarization_LinearRegression(float *sumX, float *sumY, float *sumXY, float *sumXsquare, float *sumYsquare, float points[][2], unsigned int n)
+static inline void summarization_LinearRegression(float *sumX, float *sumY, float *sumXY, float *sumXsquare, float *sumYsquare, float points[][2], unsigned int n)
 {
 	unsigned int i = 0;
 
