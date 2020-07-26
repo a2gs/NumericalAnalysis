@@ -6,7 +6,7 @@
 #define GE_STATIC (1)
 //#define GE_DYNAMIC (1)
 
-double determinant3x3(const double m[3][3])
+static inline double determinant3x3(const double m[3][3])
 {
 	return((m[0][0] * m[1][1] * m[2][2]) +
 	       (m[0][1] * m[1][2] * m[2][0]) +
@@ -16,13 +16,13 @@ double determinant3x3(const double m[3][3])
 	       (m[0][0] * m[1][2] * m[2][1]));
 }
 
-double determinant2x2(const double m[2][2])
+static inline double determinant2x2(const double m[2][2])
 {
 	return((m[0][0] * m[1][1]) -
 	       (m[0][1] * m[1][0]));
 }
 
-unsigned int offset(unsigned int l, unsigned int c, unsigned int cTot)
+static inline unsigned int offset(unsigned int l, unsigned int c, unsigned int cTot)
 {
 	return((l * cTot) + c);
 }
