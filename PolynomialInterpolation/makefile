@@ -24,9 +24,11 @@ all: clean exectag
 exectag:
 	@echo
 	@echo "=== Compiling =============="
-	$(CC) -o Lagrange Lagrange.c $(CFLAGS) $(INCLUDEPATH) $(LIBPATH) $(LIBS)
+	$(CC) -o Lagrange Lagrange.c -DDEBUG -DFLOAT_t=double $(CFLAGS) $(INCLUDEPATH) $(LIBPATH) $(LIBS)
+	$(CC) -o Newton Newton.c -DDEBUG -DFLOAT_t=float  $(CFLAGS) $(INCLUDEPATH) $(LIBPATH) $(LIBS)
+#	$(CC) -o Newton Newton.c -UDEBUG -DFLOAT_t=double $(CFLAGS) $(INCLUDEPATH) $(LIBPATH) $(LIBS)
 
 clean:
 	@echo
 	@echo "=== clean_data =============="
-	-$(RM) Lagrange core
+	-$(RM) Lagrange Newton core
