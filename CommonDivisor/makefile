@@ -10,7 +10,7 @@ CFLAGS = $(CFLAGS_OPTIMIZATION) $(CFLAGS_VERSION) $(CFLAGS_WARNINGS) $(CFLAGS_DE
 RM = rm -rf
 
 all: clean
-  $(CC) -o EuclidCommonDivisor EuclidCommonDivisor.c $(CFLAGS)
+  $(CC) -o EuclidGreatestCommonDivisor EuclidGreatestCommonDivisor.c $(CFLAGS)
 
 clean:
-  -$(RM) EuclidCommonDivisor
+  -$(RM) EuclidGreatestCommonDivisor
